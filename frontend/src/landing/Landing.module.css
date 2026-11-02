@@ -1,7 +1,7 @@
 /*
- * Landing surface. Deliberately darker than the dashboard: this is the
- * channel seen from outside, the app is the instrument you read it with.
- * Type stays in the IBM Plex superfamily so the two surfaces are relatives.
+ * Landing surface. Shares the dashboard's ink and chalk, but sets its own
+ * editorial type scale: this is the channel seen from outside, the app is
+ * the instrument you read it with.
  */
 
 .page {
@@ -82,7 +82,7 @@
 .hero {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 11vh 40px 16vh;
+  padding: 10vh 40px 12vh;
 }
 
 .eyebrow {
@@ -119,7 +119,7 @@
 
 .heroMeta {
   margin-top: 40px;
-  max-width: 46ch;
+  max-width: 52ch;
 }
 
 .heroBody {
@@ -134,6 +134,36 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--chalk-faint);
+}
+
+.facts {
+  list-style: none;
+  margin: 64px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 24px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 28px;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.factNum {
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--chalk);
+}
+
+.factLabel {
+  font-size: 13px;
+  color: var(--chalk-faint);
+  max-width: 18ch;
 }
 
 /* ---- shared section furniture ---- */
@@ -152,67 +182,178 @@
   letter-spacing: -0.015em;
   color: var(--chalk);
   max-width: 20ch;
+  margin: 0;
 }
 
 .sectionLede {
   margin-top: 20px;
-  max-width: 54ch;
+  max-width: 56ch;
   color: var(--chalk-dim);
 }
 
-/* ---- protocol steps ---- */
-
-.steps {
-  margin-top: 56px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 44px 36px;
-}
-
-.stepHead {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.stepNum {
+.scrollCue {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--channel);
   letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--chalk-faint);
+  white-space: nowrap;
 }
 
-.stepName {
+/* ---- layers ---- */
+
+.layers {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 40px 36px;
+}
+
+.layer {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--hairline);
+  padding-top: 20px;
+}
+
+.layerTag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--channel);
+}
+
+.layerName {
   font-family: 'IBM Plex Serif', Georgia, serif;
   font-weight: 400;
-  font-size: 22px;
+  font-size: 24px;
   color: var(--chalk);
-  margin: 0;
+  margin: 8px 0 14px;
 }
 
-.stepRule {
-  display: block;
-  height: 1px;
-  width: 100%;
-  margin: 16px 0 18px;
-  background: var(--hairline);
-}
-
-.stepDetail {
+.layerBody {
   font-size: 14px;
   color: var(--chalk-dim);
 }
 
-.stepFormula {
-  display: inline-block;
-  margin-top: 18px;
+.chips {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: var(--channel);
+  font-size: 11px;
+  color: var(--chalk-dim);
   background: var(--ink-raised);
   border: 1px solid var(--hairline);
   border-radius: 3px;
-  padding: 5px 9px;
+  padding: 3px 8px;
+}
+
+.layerNot {
+  margin-top: 16px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--chalk-faint);
+}
+
+/* ---- pinned horizontal protocol ---- */
+
+.pinSection {
+  overflow: hidden;
+}
+
+/* While the section is pinned it should own the viewport, otherwise the next
+   section sits visible underneath the sliding track. */
+.pinInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 9vh 40px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pinHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.track {
+  display: flex;
+  gap: 28px;
+  margin-top: 48px;
+  width: max-content;
+  will-change: transform;
+}
+
+.panel {
+  width: 58vw;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  background: var(--ink-raised);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 32px;
+}
+
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 16px;
+}
+
+.panelNum {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--channel);
+  letter-spacing: 0.1em;
+}
+
+.panelName {
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 30px;
+  color: var(--chalk);
+  margin: 0;
+}
+
+.panelDetail {
+  margin-top: 20px;
+  font-size: 15px;
+  color: var(--chalk-dim);
+}
+
+.panelFormula {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 22px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--channel);
+  background: var(--ink);
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  padding: 7px 11px;
+}
+
+.panelNote {
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--chalk-faint);
 }
 
 /* ---- threshold chain ---- */
@@ -232,7 +373,7 @@
 .chainFill {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--channel), hsl(152, 46%, 52%));
+  background: linear-gradient(90deg, var(--channel), hsl(152, 48%, 60%));
 }
 
 .chainStops {
@@ -264,32 +405,151 @@
   color: var(--chalk-faint);
 }
 
-/* ---- attacks ---- */
+/* ---- attack rail (native horizontal scroll) ---- */
 
-.attackGrid {
-  margin-top: 52px;
+.railHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.rail {
+  margin-top: 48px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1px;
-  background: var(--hairline);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(290px, 320px);
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 20px;
+  scrollbar-color: var(--hairline) transparent;
+}
+
+.rail:focus-visible {
+  outline: 2px solid var(--channel);
+  outline-offset: 6px;
+}
+
+.card {
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  background: var(--ink-raised);
   border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 22px;
 }
 
-.attack {
-  background: var(--ink);
-  padding: 24px 22px 28px;
+.cardTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.attackName {
+.cardName {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--chalk);
-  margin: 0 0 8px;
+  margin: 0;
 }
 
-.attackLine {
+.cardActor {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--chalk-faint);
+  white-space: nowrap;
+}
+
+.cardAttack {
+  margin-top: 12px;
   font-size: 13px;
+  color: var(--chalk-dim);
+}
+
+.cardMeta {
+  margin: 18px 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 14px;
+}
+
+.cardKey {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--chalk-faint);
+}
+
+.cardVal {
+  margin: 0;
+  font-size: 13px;
+  color: var(--chalk-dim);
+}
+
+.cardMono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--channel);
+  word-break: break-word;
+}
+
+.authority {
+  align-self: flex-start;
+  margin-top: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 3px 8px;
+}
+
+.authHard {
+  color: hsl(152, 48%, 60%);
+  border-color: hsl(152, 26%, 30%);
+}
+
+.authSoft {
+  color: hsl(38, 82%, 64%);
+  border-color: hsl(38, 34%, 32%);
+}
+
+/* ---- limits ---- */
+
+.limits {
+  list-style: none;
+  margin: 48px 0 0;
+  padding: 0;
+  max-width: 76ch;
+}
+
+.limit {
+  position: relative;
+  padding: 18px 0 18px 30px;
+  border-top: 1px solid var(--hairline);
+  font-size: 14px;
+  color: var(--chalk-dim);
+}
+
+.limit:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* A negation mark, not a bullet: these are things the project refuses to claim. */
+.limit::before {
+  content: '—';
+  position: absolute;
+  left: 0;
   color: var(--chalk-faint);
 }
 
@@ -298,7 +558,7 @@
 .closing {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 13vh 40px 9vh;
+  padding: 12vh 40px 9vh;
   text-align: center;
 }
 
@@ -334,8 +594,16 @@
   color: var(--ink);
 }
 
+.stack {
+  margin-top: 40px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--chalk-faint);
+}
+
 .disclaimer {
-  margin-top: 11vh;
+  margin-top: 10vh;
   padding-top: 24px;
   border-top: 1px solid var(--hairline);
   font-family: 'JetBrains Mono', monospace;
@@ -351,10 +619,39 @@
   outline-offset: 3px;
 }
 
+/* Below the pin breakpoint the protocol track stacks and scrolls normally. */
+@media (max-width: 899px) {
+  .pinInner {
+    min-height: 0;
+    display: block;
+  }
+
+  .track {
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+  }
+
+  .panel {
+    width: 100%;
+    max-width: none;
+    padding: 24px;
+  }
+
+  .panelName {
+    font-size: 24px;
+  }
+
+  .pinHead .scrollCue {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .topBar,
   .hero,
   .section,
+  .pinInner,
   .closing {
     padding-left: 20px;
     padding-right: 20px;
@@ -362,11 +659,15 @@
 
   .hero {
     padding-top: 8vh;
-    padding-bottom: 11vh;
+    padding-bottom: 10vh;
   }
 
-  .steps {
-    gap: 36px;
+  .factNum {
+    font-size: 32px;
+  }
+
+  .layers {
+    gap: 32px;
   }
 }
 
@@ -374,5 +675,9 @@
   .page * {
     animation: none !important;
     transition: none !important;
+  }
+
+  .rail {
+    scroll-snap-type: none;
   }
 }
