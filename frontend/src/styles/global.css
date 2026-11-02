@@ -29,8 +29,16 @@ h1, h2, h3, h4, h5 {
   color: var(--text-primary);
 }
 
-h1 { font-size: 18px; }
-h2 { font-size: 15px; }
+/* The display face carries the panel titles only. At the 11-13px of labels and
+   table headers it is too loud to read across seven dense tabs. */
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: 19px; }
+h2 { font-size: 16px; }
 h3 { font-size: 13px; }
 h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
 

@@ -1,192 +1,265 @@
 # QDS Sentinel
 
-**QDS Sentinel** is a research-grade cybersecurity software system designed to simulate teleportation-based Quantum Digital Signatures (QDS) and detect forgery, replay, impersonation, and quantum-channel tampering using quantum measurement statistics and deterministic mathematical rules.
+**QDS Sentinel** simulates teleportation-based Quantum Digital Signatures (QDS) and detects forgery, replay, impersonation and quantum-channel tampering using quantum measurement statistics and deterministic mathematical rules.
+
+A forger cannot copy a quantum state without disturbing it. QDS Sentinel models the protocol end to end, measures that disturbance, and decides whether a signature holds — separating what it can prove from what it can only suggest.
+
+> **Simulation only.** No quantum hardware is involved. See [What this does not claim](#what-this-does-not-claim).
 
 ---
 
-## Architectural Scope & Boundaries
+## Architecture
 
-- **Layer 1: Protocol Simulation Engine** *(Current Implementation)*
-  - Pure statevector simulation of Pauli eigenstates ($X, Y, Z$) and Bell pairs ($\Phi^+, \Phi^-, \Psi^+, \Psi^-$)
-  - Full 3-qubit quantum teleportation circuit simulation
-  - Bell measurements and feedforward Pauli corrections ($I, X, Z, XZ$)
-  - Teleportation-mediated QDS signature block creation and basic packet verification primitive
-  - Auditable telemetry logging and JSON serialization
-  - Pluggable noise interface (`NoNoise`, `DepolarizingNoise`, `PauliFlipNoise`)
-  - Strict input validation via Pydantic schemas and FastAPI REST endpoints
-- **Layer 2: Threat Detection Engine** *(Next Phase)*
-  - Finite-sample thresholding ($s_a < s_v < p_E$), multi-verifier Bob/Charlie arbitration, attack classification, and replay checks
-- **Layer 3: Dashboard and Security Reporting** *(Final Phase)*
-  - Real-time visualization and audit reports
+All three layers are implemented.
 
-> **Explicit Scope Statement**: Layer 1 does **not** implement threat detection decisions, attack classification, finite-sample thresholding, or replay detection. Layer 1 strictly models the underlying quantum protocol physics, packet binding, and telemetry generation.
+| Layer | Name | Responsibility | Will not do |
+|---|---|---|---|
+| **1** | Protocol simulation | Exact statevector simulation, Bell pairs, 3-qubit teleportation, Pauli corrections, Born-rule measurement, telemetry | Make security decisions |
+| **2** | Threat detection | Threshold analysis, replay ledger, attack classification, Bob/Charlie arbitration | Dress a statistical signal as a proof |
+| **3** | Console | Circuit trace, Bloch sphere, threat feed, metrics, audit log | Re-implement the engine |
 
----
+### Layer 1 — protocol simulation
 
-## Getting Started
+| Capability | Detail |
+|---|---|
+| Statevectors | NumPy complex arrays, normalisation asserted (‖v‖ ≈ 1.0) |
+| Pauli eigenstates | Exact basis states in X, Y and Z |
+| Bell states | Φ⁺, Φ⁻, Ψ⁺, Ψ⁻ |
+| Teleportation | Full 3-qubit circuit with feedforward correction (I, X, Z, XZ) |
+| Measurement | Exact Born-rule probabilities, deterministic or sampled |
+| Noise | `NoNoise`, `DepolarizingNoise`, `PauliFlipNoise` |
+| Telemetry | Teleportation events, measurement events, position records, mismatch summaries |
 
-### 1. Requirements
-- Python 3.11+
-- Dependencies: `fastapi`, `uvicorn`, `pydantic`, `pydantic-settings`, `numpy`, `pytest`, `httpx`
+### Layer 2 — threat detection
 
-### 2. Setup & Installation
+Every detector declares its own authority. Deterministic checks decide; statistical ones only advise.
 
-Install dependencies with pip:
-```powershell
-pip install fastapi uvicorn pydantic pydantic-settings numpy pytest httpx
-```
+| Attack | Actor | Indicator | Detector | Authority |
+|---|---|---|---|---|
+| Intercept and resend | Eve | Mismatch rate above honest baseline | `QBERAnalysisResult` | Statistical |
+| Forgery | Third party | SHA-256 digest mismatch | `DigestCheckResult` | Deterministic |
+| Replay | Captured traffic | Fingerprint already in ledger | `ReplayDetectionResult` | Deterministic |
+| Repudiation | Bob | Bob crosses `s_a` while Charlie stays under `s_v` | `BobCharlieMetrics` | Advisory |
+| Partial forgery | Third party | Mismatch scales with guessed fraction | Threshold sweep | Statistical |
+| Correction tampering | In-flight | Expected and actual corrections diverge | Correction consistency | Deterministic |
+| Channel manipulation | Eve | Per-basis mismatch distribution skews | Basis distribution | Statistical |
+| Fidelity degradation | Channel | Mean fidelity below configured floor | Fidelity monitor | Advisory |
 
-### 3. Running the Backend Server
+### The threshold chain
 
-Start the FastAPI application with uvicorn:
-```powershell
-python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
-```
+Four quantities must stay in order. If they cross, the configuration is unsound and the engine raises a `ConfigurationWarning` before judging any packet.
 
-Interactive OpenAPI / Swagger documentation will be available at:
-`http://127.0.0.1:8000/docs`
+| Symbol | Meaning | Default |
+|---|---|---|
+| `e_upper` | Honest error ceiling | 0.00 |
+| `s_a` | Authentication threshold | 0.10 |
+| `s_v` | Verification threshold | 0.20 |
+| `p_E` | Best a forger can do | 0.25 |
 
----
-
-## Running Tests
-
-Execute the complete pytest suite (45 unit and integration tests):
-```powershell
-python -m pytest backend/tests -v
-```
-
----
-
-## REST API cURL Examples
-
-### 1. Health Check
-```powershell
-curl -X GET "http://127.0.0.1:8000/health"
-```
-
-### 2. Deterministic Preconfigured Example Session
-```powershell
-curl -X GET "http://127.0.0.1:8000/api/v1/layer1/example-session"
-```
-
-### 3. Run Custom Simulation Session
-```powershell
-curl -X POST "http://127.0.0.1:8000/api/v1/layer1/simulate" `
-  -H "Content-Type: application/json" `
-  -d '{
-    "message": "FINANCIAL_TRANSACTION_PAYLOAD_001",
-    "sender_id": "alice",
-    "recipient_id": "bob",
-    "signature_length": 16,
-    "seed": 42,
-    "bell_state": "PHI_PLUS",
-    "bases_allowed": ["X", "Y", "Z"],
-    "session_id": "session-custom-001",
-    "nonce": "nonce-custom-42",
-    "sequence_number": 1
-  }'
-```
+Required ordering: `e_upper < s_a < s_v < p_E`
 
 ---
 
-## Sample Response Structure
+## Getting started
 
-```json
-{
-  "protocol_version": "1.0.0",
-  "session_id": "session-custom-001",
-  "signature_block_id": "61ef5b66-42ca-443c-afe2-b1d546524eb0",
-  "sender_id": "alice",
-  "recipient_id": "bob",
-  "message": "FINANCIAL_TRANSACTION_PAYLOAD_001",
-  "message_digest": "e2e6be5670a0e7eecef264e9e6806ad49352893c5e334313ed1444200e494068",
-  "nonce": "nonce-custom-42",
-  "sequence_number": 1,
-  "created_at": "2026-08-30T01:40:00.000000+00:00",
-  "configuration": {
-    "signature_length": 16,
-    "seed": 42,
-    "bell_state": "PHI_PLUS",
-    "bases_allowed": ["X", "Y", "Z"],
-    "noise_model": "NoNoise"
-  },
-  "signature_positions": [
-    {
-      "index": 0,
-      "pauli_basis": "X",
-      "encoded_bit": 1,
-      "prepared_state_label": "|->",
-      "bell_state": "PHI_PLUS",
-      "bell_measurement_bits": "11",
-      "expected_correction": "XZ",
-      "actual_correction": "XZ",
-      "final_measured_bit": 1,
-      "expected_bit": 1,
-      "fidelity": 1.0,
-      "is_match": true
-    }
-  ],
-  "teleportation_events": [
-    {
-      "event_id": "14c98354-37c4-4c90-a158-4b188e05cf53",
-      "position_index": 0,
-      "bell_state": "PHI_PLUS",
-      "bell_measurement_bits": "11",
-      "expected_correction": "XZ",
-      "applied_correction": "XZ",
-      "fidelity": 1.0,
-      "step_trace": [
-        "Prepared Bell state PHI_PLUS on qubits (q1, q2)",
-        "Formed composite 3-qubit state |q0> (x) |q1,q2> with input |->",
-        "Applied CNOT gate with control q0 and target q1",
-        "Applied Hadamard gate on qubit q0",
-        "Measured qubits (q0, q1) in computational basis, outcome bits: '11'",
-        "Applied Pauli correction 'XZ' to receiver qubit q2",
-        "Calculated state fidelity: 1.00000000"
-      ]
-    }
-  ],
-  "measurement_events": [
-    {
-      "event_id": "c1030b3c-2a75-41b9-9860-dbf0af00f58d",
-      "position_index": 0,
-      "basis": "X",
-      "outcome_bit": 1,
-      "probabilities": {
-        "0": 0.0,
-        "1": 1.0
-      },
-      "is_deterministic": true
-    }
-  ],
-  "verification_summary": {
-    "total_positions": 16,
-    "matching_positions": 16,
-    "mismatching_positions": 0,
-    "mismatch_count": 0,
-    "mismatch_rate": 0.0,
-    "average_fidelity": 1.0,
-    "basis_distribution": {
-      "X": 5,
-      "Y": 6,
-      "Z": 5
-    },
-    "correction_distribution": {
-      "I": 4,
-      "X": 4,
-      "Z": 4,
-      "XZ": 4
-    },
-    "digest_matches": true,
-    "is_perfect_match": true
-  }
-}
+### Requirements
+
+| Component | Version |
+|---|---|
+| Python | 3.11+ |
+| Node.js | 18+ |
+
+### Backend
+
+```bash
+python -m venv .venv
+```
+
+```bash
+.venv/Scripts/python.exe -m pip install -r backend/requirements.txt
+```
+
+```bash
+.venv/Scripts/python.exe -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
+```
+
+Swagger UI: `http://127.0.0.1:8000/docs`
+
+### Frontend
+
+```bash
+npm install --prefix frontend
+```
+
+```bash
+npm run dev --prefix frontend
+```
+
+| Route | Page |
+|---|---|
+| `/` | Landing page — what the protocol does and how it is checked |
+| `/dashboard` | The console |
+
+The Vite dev server proxies `/api` and `/health` to port 8000, so the backend must be running.
+
+---
+
+## API
+
+### Layer 1 — `/api/v1/layer1`
+
+| Method | Path | Does |
+|---|---|---|
+| `POST` | `/simulate` | Run a full QDS protocol session |
+| `GET` | `/example-session` | Deterministic 8-position clean session, seed 42 |
+| `GET` | `/bloch-state/{basis}/{bit}` | Bloch coordinates for a bare Pauli eigenstate |
+| `POST` | `/bloch-trace` | Bloch coordinates for every position in a session |
+
+### Layer 2 — `/api/v1/layer2`
+
+| Method | Path | Does |
+|---|---|---|
+| `POST` | `/assess` | Simulate and assess, with optional identity checks |
+| `POST` | `/assess-existing` | Assess a session without re-running Layer 1 |
+| `POST` | `/attack-simulate` | Inject an attack, then assess |
+| `GET` | `/example-clean` | Clean session — expect ACCEPT |
+| `GET` | `/example-replay` | Replay detection — expect REJECT |
+| `GET` | `/example-forgery` | Digest mismatch — expect REJECT |
+
+### Operations — `/api/ops`
+
+| Method | Path | Does |
+|---|---|---|
+| `GET` | `/overview` | Today's traffic and verdict summary |
+| `GET` | `/threat-feed` | Recent flagged events |
+| `GET` | `/trends` | Hourly activity and incident distribution |
+| `GET` | `/sessions` | Stored sessions |
+| `GET` | `/logs` | Telemetry across sessions |
+| `GET` | `/logs/{session_id}` | Telemetry for one session |
+| `GET` | `/audit/verify` | Whether the Mongo audit chain is intact |
+
+---
+
+## Tests
+
+```bash
+.venv/Scripts/python.exe -m pytest backend/tests -q
+```
+
+**161 passing.**
+
+| Area | Tests |
+|---|---|
+| Layer 2 API (integration) | 20 |
+| Layer 2 detectors | 19 |
+| Layer 2 engine | 16 |
+| Replay ledger | 12 |
+| Calibration | 11 |
+| Layer 1 flow (integration) | 11 |
+| Bounds | 10 |
+| Bloch visualisation | 10 |
+| Teleportation | 6 |
+| Quantum states | 6 |
+| Pauli corrections | 6 |
+| QDS signature | 5 |
+| Attacks | 5 |
+| Keygen | 4 |
+| Measurement | 4 |
+| Bell states | 3 |
+| Mongo audit sink | 13 |
+
+Five warnings are expected: tests that deliberately feed invalid threshold chains, plus one FastAPI deprecation.
+
+---
+
+## Audit log
+
+Sessions are written to SQLite, which is what the dashboard reads. They are
+also mirrored to an append-only MongoDB collection that exists to prove
+afterwards that nothing was altered.
+
+Two protections, doing different jobs:
+
+| | Mechanism | Protects against | Reversible |
+|---|---|---|---|
+| **Confidentiality** | Fernet (AES-128-CBC + HMAC) on `message`, `sender_id`, `recipient_id`, `raw_assessment_string` | Anyone reading the collection directly | Yes — the app decrypts |
+| **Integrity** | SHA-256 chain: each record hashes its own content plus the previous record's hash | Silent edits or deletions by anyone with write access | No — one-way by design |
+
+Hashing alone would make the log unreadable, including to the dashboard.
+Encryption alone would leave it silently editable. Together the log is
+confidential and provably unaltered: changing any record breaks every hash
+after it, which `GET /api/ops/audit/verify` reports with the sequence number
+where the chain first fails.
+
+Verdicts, rates and thresholds stay in plaintext, so the operations endpoints
+can still aggregate over them.
+
+### Configuration
+
+| Variable | Effect |
+|---|---|
+| `MONGODB_URI` | Enables the sink. Unset, the sink is disabled and the app runs on SQLite alone |
+| `MONGODB_DB` | Database name (default `qds_sentinel`) |
+| `AUDIT_ENCRYPTION_KEY` | Fernet key or any passphrase. Unset, records are chained but not encrypted |
+
+```bash
+export MONGODB_URI="mongodb://localhost:27017"
+```
+
+```bash
+export AUDIT_ENCRYPTION_KEY="$(python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')"
+```
+
+The sink degrades quietly: an unreachable server disables it rather than
+failing a request, because losing the audit mirror must never cost the primary
+record.
+
+> Tested against `mongomock`, so the suite needs no running server. It has not
+> yet been run against a real MongoDB instance.
+
+---
+
+## Layout
+
+```
+backend/app/
+  layer1_protocol/   statevectors, Bell states, teleportation, signatures
+  layer2_threat/     detectors, bounds, calibration, replay ledger, engine
+  database/          SQLAlchemy models, CRUD, session, Mongo audit sink
+  schemas/           Pydantic request and response models
+  api/               Layer 1 and operations routes
+frontend/src/
+  landing/           landing page, GSAP scroll, cursor-warp canvas
+  views/             dashboard tabs
+  components/        badges, banners, Bloch sphere, operations mode
+  styles/            tokens.css drives the whole palette
+docs/                protocol spec, threat model, security claims, audits
 ```
 
 ---
 
-## Documentation Links
+## What this does not claim
 
-- [Protocol Specification](docs/protocol-spec.md)
-- [Layer 1 Scope & Assumptions](docs/layer1-assumptions.md)
-- [Layer 1 REST API Reference](docs/layer1-api.md)
+Taken from [`docs/layer2-security-claims.md`](docs/layer2-security-claims.md), which is required reading before interpreting any assessment.
+
+| Limitation | Detail |
+|---|---|
+| No quantum hardware | Every result is a software simulation of protocol mechanics |
+| No composable security proof | Approximates Amiri et al. (2016) and Gottesman-Chuang (2001); does not reproduce them |
+| Classical digest binding | The quantum key binding that makes real QDS information-theoretically secure is modelled, not proven |
+| In-memory replay ledger | Does not survive a restart; distributed replay prevention is out of scope |
+| Detection is not exhaustive | Attack variants outside the modelled eight may pass |
+
+---
+
+## Documentation
+
+| Document | Covers |
+|---|---|
+| [`protocol-spec.md`](docs/protocol-spec.md) | The protocol as implemented |
+| [`threat-model.md`](docs/threat-model.md) | Actors, attacks, detectors, limitations |
+| [`layer2-security-claims.md`](docs/layer2-security-claims.md) | What is and is not proven |
+| [`layer1-assumptions.md`](docs/layer1-assumptions.md) | Layer 1 scope boundaries |
+| [`layer1-api.md`](docs/layer1-api.md) · [`layer2-api.md`](docs/layer2-api.md) | Endpoint reference |
+| [`layer2-detection-spec.md`](docs/layer2-detection-spec.md) | Detector definitions |
+| [`demo-script.md`](docs/demo-script.md) · [`layer3-demo-script.md`](docs/layer3-demo-script.md) | Walkthroughs |

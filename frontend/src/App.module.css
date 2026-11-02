@@ -3,6 +3,12 @@
   flex-direction: column;
   min-height: 100vh;
   background: var(--bg-base);
+  /* Gives the entrance fold somewhere to happen; harmless once it is over. */
+  transform-style: preserve-3d;
+}
+
+.shell > * {
+  backface-visibility: hidden;
 }
 
 .topBar {

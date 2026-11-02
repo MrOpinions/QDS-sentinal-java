@@ -245,3 +245,15 @@ def get_recent_logs(limit: int = 100, db: DBSession = Depends(get_db)):
         })
     return {"logs": formatted_logs, "total": len(formatted_logs)}
 
+
+
+@router.get("/audit/verify")
+def verify_audit_chain():
+    """Report whether the Mongo audit log is intact.
+
+    `enabled` is false when no MONGODB_URI is configured, in which case the
+    app is running on SQLite alone and there is no chain to check.
+    """
+    from app.database.mongo_audit import get_audit_sink
+
+    return get_audit_sink().verify_chain()

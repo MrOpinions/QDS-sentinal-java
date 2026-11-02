@@ -56,8 +56,9 @@
   --basis-y: hsl(280, 62%, 72%);
   --basis-z: hsl(152, 48%, 60%);
 
-  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-sans: 'Work Sans', system-ui, sans-serif;
+  --font-mono: 'Azeret Mono', 'Cascadia Code', ui-monospace, monospace;
 
   --radius-sm: 2px;
   --radius-md: 4px;

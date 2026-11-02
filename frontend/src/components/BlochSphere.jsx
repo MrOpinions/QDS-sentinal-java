@@ -188,7 +188,7 @@ export default function BlochSphere({
         z: [1.25, -1.25, 0, 0, 0, 0],
         text: ['|0⟩ (+z)', '|1⟩ (-z)', '|+⟩ (+x)', '|-⟩ (-x)', '|+i⟩ (+y)', '|-i⟩ (-y)'],
         textfont: {
-          family: 'JetBrains Mono, monospace',
+          family: 'Azeret Mono, monospace',
           size: 10,
           color: COLOR_TEXT,
         },
@@ -245,7 +245,7 @@ export default function BlochSphere({
         text: [label || 'Ψ'],
         textposition: 'top center',
         textfont: {
-          family: 'JetBrains Mono, monospace',
+          family: 'Azeret Mono, monospace',
           size: 11,
           color: animColor,
         },

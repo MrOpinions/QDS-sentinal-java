@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getOpsOverview, getOpsThreatFeed, getOpsTrends } from '../../api/ops'
 import HeroStatus from './HeroStatus'
+import InfiltrationMap from './InfiltrationMap'
 import ActivityFeed from './ActivityFeed'
 import ExposureSummary from './ExposureSummary'
 import TrendPanel from './TrendPanel'
@@ -59,7 +60,10 @@ export default function OperationsMode() {
       {/* SECTION 1: THE HEADLINE ANSWER (Dominant visual weight) */}
       <HeroStatus overview={loading ? null : overview} />
 
-      {/* SECTIONS 2 & 3: WHAT HAPPENED + HOW EXPOSED AM I */}
+      {/* SECTION 2: WHERE IT LANDED ON THE PROTOCOL */}
+      <InfiltrationMap feedData={loading ? null : feedData} />
+
+      {/* SECTIONS 3 & 4: WHAT HAPPENED + HOW EXPOSED AM I */}
       <div className={styles.middleGrid}>
         <div className={styles.middleColLeft}>
           <ActivityFeed feedData={loading ? null : feedData} />

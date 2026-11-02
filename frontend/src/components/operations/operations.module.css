@@ -549,3 +549,257 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- infiltration map ---------------------------------------------------
+   Where recorded findings land on the protocol pipeline. Pipeline order is
+   information here: it is the real order of the protocol, so a breach early
+   in the chain means something different from one at verification.          */
+
+.mapPanel {
+  background: var(--bg-surface);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.mapHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.mapTitle {
+  font-family: var(--font-display);
+  font-size: 18px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.mapLede {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 68ch;
+}
+
+.mapSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.mapSummaryNum {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mapSummaryOf {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.mapSummaryLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.mapRail {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: var(--space-4) 0;
+  overflow-x: auto;
+}
+
+.mapEndpoint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+  flex-shrink: 0;
+  min-width: 62px;
+}
+
+.mapEndpointName {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.mapEndpointRole {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.mapChain {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+
+.mapCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 96px;
+  position: relative;
+  text-align: center;
+}
+
+/* The link between stages: the channel itself. */
+.mapCell::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: -50%;
+  width: 100%;
+  height: 1px;
+  background: var(--bg-chrome);
+}
+
+.mapCell:first-child::before {
+  left: -14px;
+  width: 64px;
+}
+
+.mapNode {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1px solid var(--bg-chrome);
+  background: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.mapNodeClean {
+  border-color: var(--color-accept-border);
+  background: var(--color-accept-bg);
+}
+
+.mapNodeAdvisory {
+  border-color: var(--color-advisory-border);
+  background: var(--color-advisory-bg);
+}
+
+.mapNodeSuspicious {
+  border-color: var(--color-suspicious-border);
+  background: var(--color-suspicious-bg);
+}
+
+.mapNodeCritical {
+  border-color: var(--color-critical-border);
+  background: var(--color-critical-bg);
+}
+
+.mapCount {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.mapNodeLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.mapNodeShort {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.mapNotes {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1px;
+  background: var(--bg-chrome);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.mapNote {
+  background: var(--bg-surface);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  min-width: 0;
+}
+
+.mapNoteBreached {
+  background: var(--bg-base);
+}
+
+.mapNoteHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: 6px;
+}
+
+.mapNoteLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mapNoteState {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+
+.mapStateOk { color: var(--color-accept); }
+.mapStateBad { color: var(--color-critical); }
+
+.mapNoteBody {
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.mapFoot {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .mapRail {
+    gap: var(--space-2);
+  }
+
+  .mapCell {
+    min-width: 88px;
+  }
+}
