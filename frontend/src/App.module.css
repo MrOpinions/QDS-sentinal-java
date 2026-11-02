@@ -3,6 +3,12 @@
   flex-direction: column;
   min-height: 100vh;
   background: var(--bg-base);
+  /* Gives the entrance fold somewhere to happen; harmless once it is over. */
+  transform-style: preserve-3d;
+}
+
+.shell > * {
+  backface-visibility: hidden;
 }
 
 .topBar {
@@ -48,7 +54,7 @@
 }
 
 .modeBtnActive:hover {
-  background: hsl(40, 5%, 22%);
+  background: var(--btn-primary-hover);
   color: var(--text-inverse);
 }
 
@@ -86,7 +92,7 @@
   gap: 5px;
   padding: 3px 8px;
   background: var(--color-critical-bg);
-  border: 1px solid hsl(6, 44%, 82%);
+  border: 1px solid var(--color-critical-border);
   border-radius: var(--radius-sm);
   color: var(--color-critical);
   font-size: 10px;
@@ -100,7 +106,7 @@
   gap: 5px;
   padding: 3px 8px;
   background: var(--color-accept-bg);
-  border: 1px solid hsl(142, 22%, 82%);
+  border: 1px solid var(--color-accept-border);
   border-radius: var(--radius-sm);
   color: var(--color-accept);
   font-size: 10px;
@@ -111,14 +117,14 @@
 .backendWarning {
   padding: 8px var(--space-6);
   background: var(--color-critical-bg);
-  border-bottom: 1px solid hsl(6, 44%, 82%);
+  border-bottom: 1px solid var(--color-critical-border);
   color: var(--color-critical);
   font-size: 11px;
 }
 
 .backendWarning code {
   font-family: var(--font-mono);
-  background: rgba(0,0,0,0.05);
+  background: var(--bg-overlay);
   padding: 1px 4px;
   border-radius: var(--radius-sm);
 }
@@ -241,7 +247,7 @@
   justify-content: center;
   background: var(--color-critical-bg);
   color: var(--color-critical);
-  border: 1px solid hsl(6, 44%, 82%);
+  border: 1px solid var(--color-critical-border);
   border-radius: var(--radius-sm);
   font-size: 9px;
   font-family: var(--font-mono);

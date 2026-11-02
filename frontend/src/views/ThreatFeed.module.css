@@ -112,7 +112,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-overlay);
   padding: 8px 10px;
   border-radius: var(--radius-sm);
 }
@@ -137,7 +137,7 @@
 
 .critical {
   background: var(--color-critical-bg);
-  border-color: hsl(6, 44%, 86%);
+  border-color: var(--color-critical-border);
 }
 
 .critical .findingBar { background: var(--color-critical-bar); }
@@ -146,7 +146,7 @@
 
 .suspicious {
   background: var(--color-suspicious-bg);
-  border-color: hsl(28, 46%, 86%);
+  border-color: var(--color-suspicious-border);
 }
 
 .suspicious .findingBar { background: var(--color-suspicious-bar); }
@@ -155,7 +155,7 @@
 
 .advisory {
   background: var(--color-advisory-bg);
-  border-color: hsl(38, 48%, 86%);
+  border-color: var(--color-advisory-border);
 }
 
 .advisory .findingBar { background: var(--color-advisory-bar); }
@@ -164,7 +164,7 @@
 
 .clean {
   background: var(--color-accept-bg);
-  border-color: hsl(142, 22%, 86%);
+  border-color: var(--color-accept-border);
 }
 
 .clean .findingBar { background: var(--color-accept-bar); }

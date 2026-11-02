@@ -120,13 +120,13 @@
 .flagRaised {
   background: var(--color-critical-bg);
   color: var(--color-critical);
-  border: 1px solid hsl(6, 44%, 82%);
+  border: 1px solid var(--color-critical-border);
 }
 
 .flagClear {
   background: var(--color-accept-bg);
   color: var(--color-accept);
-  border: 1px solid hsl(142, 22%, 82%);
+  border: 1px solid var(--color-accept-border);
 }
 
 .basisTable {
@@ -163,9 +163,9 @@
   border-bottom: none;
 }
 
-.basisX { color: hsl(213, 50%, 42%); }
-.basisY { color: hsl(280, 38%, 46%); }
-.basisZ { color: hsl(142, 30%, 40%); }
+.basisX { color: var(--basis-x); }
+.basisY { color: var(--basis-y); }
+.basisZ { color: var(--basis-z); }
 
 .insuf {
   font-size: 9px;
@@ -222,6 +222,6 @@
   background: var(--color-critical-bg);
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border: 1px solid hsl(6, 44%, 86%);
+  border: 1px solid var(--color-critical-border);
   margin: calc(-1 * var(--space-3));
 }

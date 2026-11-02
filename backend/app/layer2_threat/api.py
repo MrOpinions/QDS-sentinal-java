@@ -120,6 +120,8 @@ def _persist_assessment(
                 "timestamp": datetime.now(timezone.utc).replace(tzinfo=None),
             })
 
+        _mirror_to_audit_log(session_data, telemetry_logs, assessment)
+
         db.close()
     except Exception:
         pass
@@ -375,6 +377,32 @@ ATTACK_SIMULATE_EXAMPLES = {
         },
     },
 }
+
+
+def _mirror_to_audit_log(session_data, telemetry_logs, assessment) -> None:
+    """Mirror the persisted session into the tamper-evident Mongo audit log.
+
+    Separate from the SQLite write on purpose: the dashboard reads SQLite, while
+    this log exists to prove afterwards that nothing was altered. A failure here
+    must never cost us the primary record, so it is swallowed.
+    """
+    try:
+        from app.database.mongo_audit import get_audit_sink
+
+        sink = get_audit_sink()
+        if not sink.enabled:
+            return
+
+        session_id = session_data["id"]
+        sink.append("session", session_id, session_data)
+        sink.append_many("telemetry", session_id, telemetry_logs)
+        sink.append_many(
+            "finding",
+            session_id,
+            [{"finding": f} for f in assessment.findings],
+        )
+    except Exception:
+        pass
 
 
 @router.post(

@@ -32,14 +32,14 @@
 
 .error {
   background: var(--color-critical-bg);
-  border-color: hsl(6, 44%, 82%);
+  border-color: var(--color-critical-border);
   border-left-color: var(--color-critical-bar);
   color: var(--color-critical);
 }
 
 .validation {
   background: var(--color-advisory-bg);
-  border-color: hsl(38, 48%, 82%);
+  border-color: var(--color-advisory-border);
   border-left-color: var(--color-advisory-bar);
   color: var(--color-advisory);
 }

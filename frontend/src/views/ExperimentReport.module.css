@@ -59,7 +59,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: hsl(213, 45%, 55%);
+  background: var(--basis-x);
   border: 1px solid white;
 }
 
@@ -67,7 +67,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: hsl(28, 62%, 52%);
+  background: var(--color-suspicious);
   border: 1px solid white;
 }
 
@@ -75,14 +75,14 @@
   display: inline-block;
   width: 24px;
   height: 0;
-  border-top: 2px dashed hsl(38, 62%, 44%);
+  border-top: 2px dashed var(--color-advisory);
 }
 
 .lineSuspicious {
   display: inline-block;
   width: 24px;
   height: 0;
-  border-top: 2px dashed hsl(28, 60%, 46%);
+  border-top: 2px dashed var(--color-suspicious);
 }
 
 .chartScientificNote {
@@ -131,15 +131,15 @@
 }
 
 .liveRow td {
-  background: hsl(28, 50%, 97%) !important;
+  background: var(--color-suspicious-bg) !important;
 }
 
 .sourcecsv {
-  color: hsl(213, 45%, 50%);
+  color: var(--basis-x);
 }
 
 .sourcelive {
-  color: hsl(28, 62%, 48%);
+  color: var(--color-suspicious);
 }
 
 .accept {

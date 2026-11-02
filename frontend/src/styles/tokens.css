@@ -1,39 +1,64 @@
+/*
+ * Dark instrument palette, sharing the landing page's ground so the two
+ * surfaces read as one product. Ink and chalk come straight from
+ * landing/Landing.module.css; the status hues keep their original
+ * identities (green accept, amber advisory, orange suspicious, red
+ * critical) but are lifted for legibility on a dark field.
+ */
+
 :root {
-  --bg-base: hsl(40, 8%, 93%);
-  --bg-surface: hsl(40, 6%, 97%);
-  --bg-chrome: hsl(40, 5%, 86%);
-  --bg-hover: hsl(40, 6%, 91%);
+  --bg-base: hsl(222, 38%, 7%);
+  --bg-surface: hsl(222, 30%, 11%);
+  --bg-chrome: hsl(222, 20%, 20%);
+  --bg-hover: hsl(222, 24%, 16%);
+  --bg-overlay: hsla(0, 0%, 100%, 0.05);
 
   --border: 1px solid var(--bg-chrome);
 
-  --text-primary: hsl(40, 5%, 14%);
-  --text-secondary: hsl(40, 5%, 35%);
-  --text-muted: hsl(40, 4%, 52%);
-  --text-inverse: hsl(40, 6%, 97%);
+  --text-primary: hsl(40, 22%, 93%);
+  --text-secondary: hsl(40, 10%, 72%);
+  --text-muted: hsl(40, 8%, 52%);
+  --text-inverse: hsl(222, 38%, 7%);
 
-  --color-accept: hsl(142, 26%, 38%);
-  --color-accept-bg: hsl(142, 22%, 93%);
-  --color-accept-bar: hsl(142, 30%, 42%);
+  /* Chalk dimmed rather than darkened: on a dark field a "pressed" surface
+     steps down in brightness, not up. */
+  --btn-primary-hover: hsl(40, 18%, 84%);
 
-  --color-advisory: hsl(38, 62%, 44%);
-  --color-advisory-bg: hsl(38, 55%, 94%);
-  --color-advisory-bar: hsl(38, 65%, 48%);
+  --color-accept: hsl(152, 48%, 60%);
+  --color-accept-bg: hsl(152, 30%, 12%);
+  --color-accept-bar: hsl(152, 46%, 50%);
+  --color-accept-border: hsl(152, 26%, 26%);
 
-  --color-suspicious: hsl(28, 60%, 46%);
-  --color-suspicious-bg: hsl(28, 52%, 94%);
-  --color-suspicious-bar: hsl(28, 64%, 50%);
+  --color-advisory: hsl(38, 82%, 64%);
+  --color-advisory-bg: hsl(38, 40%, 12%);
+  --color-advisory-bar: hsl(38, 72%, 54%);
+  --color-advisory-border: hsl(38, 34%, 28%);
 
-  --color-critical: hsl(6, 52%, 42%);
-  --color-critical-bg: hsl(6, 48%, 95%);
-  --color-critical-bar: hsl(6, 58%, 46%);
+  --color-suspicious: hsl(28, 82%, 64%);
+  --color-suspicious-bg: hsl(28, 42%, 12%);
+  --color-suspicious-bar: hsl(28, 74%, 56%);
+  --color-suspicious-border: hsl(28, 36%, 28%);
+  --color-suspicious-hover: hsl(28, 40%, 18%);
 
-  --color-neutral: hsl(40, 5%, 55%);
-  --color-neutral-bg: hsl(40, 5%, 93%);
+  --color-critical: hsl(6, 80%, 68%);
+  --color-critical-bg: hsl(6, 40%, 13%);
+  --color-critical-bar: hsl(6, 70%, 56%);
+  --color-critical-border: hsl(6, 38%, 30%);
 
-  --color-link: hsl(213, 50%, 40%);
+  --color-neutral: hsl(222, 10%, 58%);
+  --color-neutral-bg: hsl(222, 20%, 15%);
 
-  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --color-link: hsl(190, 68%, 62%);
+
+  /* Measurement bases. X borrows the landing page's channel cyan so the
+     two surfaces agree on what "the channel" looks like. */
+  --basis-x: hsl(190, 68%, 64%);
+  --basis-y: hsl(280, 62%, 72%);
+  --basis-z: hsl(152, 48%, 60%);
+
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-sans: 'Work Sans', system-ui, sans-serif;
+  --font-mono: 'Azeret Mono', 'Cascadia Code', ui-monospace, monospace;
 
   --radius-sm: 2px;
   --radius-md: 4px;

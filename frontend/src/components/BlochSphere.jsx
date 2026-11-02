@@ -2,11 +2,11 @@ import { useEffect, useState, useMemo, useRef } from 'react'
 import Plot from 'react-plotly.js'
 import styles from './BlochSphere.module.css'
 
-const COLOR_ACCEPT = 'hsl(142, 26%, 38%)'
-const COLOR_CRITICAL = 'hsl(6, 52%, 42%)'
-const COLOR_WIRE = 'hsl(40, 5%, 82%)'
-const COLOR_AXIS = 'hsl(40, 5%, 72%)'
-const COLOR_TEXT = 'hsl(40, 5%, 35%)'
+const COLOR_ACCEPT = 'hsl(152, 48%, 60%)'
+const COLOR_CRITICAL = 'hsl(6, 80%, 68%)'
+const COLOR_WIRE = 'hsl(222, 18%, 26%)'
+const COLOR_AXIS = 'hsl(222, 14%, 38%)'
+const COLOR_TEXT = 'hsl(40, 10%, 72%)'
 
 function generateSphereData() {
   const stepsU = 24
@@ -134,8 +134,8 @@ export default function BlochSphere({
         showscale: false,
         opacity: 0.07,
         colorscale: [
-          [0, 'hsl(40, 6%, 80%)'],
-          [1, 'hsl(40, 6%, 80%)'],
+          [0, 'hsl(222, 16%, 30%)'],
+          [1, 'hsl(222, 16%, 30%)'],
         ],
         hoverinfo: 'none',
       },
@@ -188,7 +188,7 @@ export default function BlochSphere({
         z: [1.25, -1.25, 0, 0, 0, 0],
         text: ['|0⟩ (+z)', '|1⟩ (-z)', '|+⟩ (+x)', '|-⟩ (-x)', '|+i⟩ (+y)', '|-i⟩ (-y)'],
         textfont: {
-          family: 'JetBrains Mono, monospace',
+          family: 'Azeret Mono, monospace',
           size: 10,
           color: COLOR_TEXT,
         },
@@ -205,10 +205,10 @@ export default function BlochSphere({
               z: [coordinates.z, collapsedCoordinates.z],
               marker: {
                 size: 3,
-                color: 'hsl(40, 5%, 60%)',
+                color: 'hsl(40, 8%, 56%)',
               },
               line: {
-                color: 'hsl(40, 5%, 70%)',
+                color: 'hsl(40, 10%, 66%)',
                 width: 2,
                 dash: 'dot',
               },
@@ -245,7 +245,7 @@ export default function BlochSphere({
         text: [label || 'Ψ'],
         textposition: 'top center',
         textfont: {
-          family: 'JetBrains Mono, monospace',
+          family: 'Azeret Mono, monospace',
           size: 11,
           color: animColor,
         },
@@ -283,10 +283,10 @@ export default function BlochSphere({
         xaxis: {
           range: [-1.4, 1.4],
           showgrid: true,
-          gridcolor: 'hsl(40, 5%, 88%)',
+          gridcolor: 'hsl(222, 16%, 22%)',
           gridwidth: 1,
           zeroline: true,
-          zerolinecolor: 'hsl(40, 5%, 80%)',
+          zerolinecolor: 'hsl(222, 18%, 28%)',
           showticklabels: false,
           showspikes: false,
           title: { text: '' },
@@ -294,10 +294,10 @@ export default function BlochSphere({
         yaxis: {
           range: [-1.4, 1.4],
           showgrid: true,
-          gridcolor: 'hsl(40, 5%, 88%)',
+          gridcolor: 'hsl(222, 16%, 22%)',
           gridwidth: 1,
           zeroline: true,
-          zerolinecolor: 'hsl(40, 5%, 80%)',
+          zerolinecolor: 'hsl(222, 18%, 28%)',
           showticklabels: false,
           showspikes: false,
           title: { text: '' },
@@ -305,10 +305,10 @@ export default function BlochSphere({
         zaxis: {
           range: [-1.4, 1.4],
           showgrid: true,
-          gridcolor: 'hsl(40, 5%, 88%)',
+          gridcolor: 'hsl(222, 16%, 22%)',
           gridwidth: 1,
           zeroline: true,
-          zerolinecolor: 'hsl(40, 5%, 80%)',
+          zerolinecolor: 'hsl(222, 18%, 28%)',
           showticklabels: false,
           showspikes: false,
           title: { text: '' },

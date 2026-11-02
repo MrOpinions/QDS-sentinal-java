@@ -64,7 +64,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  border-top: 1px dashed rgba(0, 0, 0, 0.12);
+  border-top: 1px dashed var(--bg-chrome);
   padding-top: 6px;
 }
 
@@ -89,7 +89,7 @@
 
 .rawDecisionText {
   font-size: 10px;
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--bg-overlay);
   padding: 6px 8px;
   border-radius: var(--radius-sm);
   word-break: break-all;
@@ -98,14 +98,14 @@
 
 .accept {
   background: var(--color-accept-bg);
-  border-color: hsl(142, 22%, 78%);
+  border-color: var(--color-accept-border);
   border-left-color: var(--color-accept-bar);
   color: var(--color-accept);
 }
 
 .reject {
   background: var(--color-critical-bg);
-  border-color: hsl(6, 44%, 80%);
+  border-color: var(--color-critical-border);
   border-left-color: var(--color-critical-bar);
   color: var(--color-critical);
 }

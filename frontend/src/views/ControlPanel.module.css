@@ -42,7 +42,7 @@
 }
 
 .visualizeBtn:hover:not(:disabled) {
-  background: hsl(28, 52%, 90%);
+  background: var(--color-suspicious-hover);
 }
 
 

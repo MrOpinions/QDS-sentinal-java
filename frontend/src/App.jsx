@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import gsap from 'gsap'
 import ControlPanel from './views/ControlPanel'
 import CircuitTrace from './views/CircuitTrace'
 import QuantumState from './views/QuantumState'
@@ -64,6 +65,7 @@ function ScenarioStrip({ assessment, attackMeta }) {
 }
 
 export default function App() {
+  const shellRef = useRef(null)
   const [activeTab, setActiveTab] = useState('control')
   const [assessment, setAssessment] = useState(null)
   const [sessionResult, setSessionResult] = useState(null)
@@ -78,6 +80,48 @@ export default function App() {
     setMode(newMode)
     localStorage.setItem('qds_mode', newMode)
   }
+
+  // Entrance: the top-left corner lifts off the plane first, then each band
+  // below it unfolds from its own top edge, so the console arrives the way a
+  // folded sheet opens rather than simply fading in.
+  useLayoutEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const shell = shellRef.current
+    if (!shell) return
+
+    const ctx = gsap.context(() => {
+      const bands = gsap.utils.toArray(shell.children)
+
+      gsap.timeline({ defaults: { ease: 'power3.out' } })
+        .from(shell, {
+          transformPerspective: 1800,
+          transformOrigin: '0% 0%',
+          rotateX: -62,
+          rotateY: 22,
+          scale: 0.94,
+          opacity: 0,
+          duration: 0.85,
+        })
+        .from(
+          bands,
+          {
+            transformPerspective: 1400,
+            transformOrigin: '50% 0%',
+            rotateX: -85,
+            opacity: 0,
+            duration: 0.5,
+            stagger: 0.085,
+          },
+          '-=0.4',
+        )
+        // Leave no transform behind: a lingering one would make every fixed or
+        // sticky child position against the shell instead of the viewport.
+        .set([shell, ...bands], { clearProps: 'transform,transformPerspective,transformOrigin,opacity' })
+    }, shell)
+
+    return () => ctx.revert()
+  }, [])
 
   function applyResult(result) {
     setAssessment(result.assessment ?? null)
@@ -123,7 +167,7 @@ export default function App() {
   const hasResult = Boolean(assessment)
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} ref={shellRef}>
       <header className={styles.topBar}>
         <div className={styles.brand}>
           <span className={styles.brandName}>QDS Sentinel</span>

@@ -10,11 +10,11 @@ import {
 } from 'recharts'
 import styles from './operations.module.css'
 
-const COLOR_SAFE = 'hsl(142, 26%, 38%)'
-const COLOR_CRITICAL = 'hsl(6, 52%, 42%)'
-const COLOR_SUSPICIOUS = 'hsl(28, 60%, 46%)'
-const COLOR_GRID = 'hsl(40, 5%, 86%)'
-const COLOR_AXIS = 'hsl(40, 4%, 52%)'
+const COLOR_SAFE = 'hsl(152, 48%, 60%)'
+const COLOR_CRITICAL = 'hsl(6, 80%, 68%)'
+const COLOR_SUSPICIOUS = 'hsl(28, 82%, 64%)'
+const COLOR_GRID = 'hsl(222, 18%, 24%)'
+const COLOR_AXIS = 'hsl(40, 8%, 56%)'
 
 const CRITICAL_TYPES = new Set([
   'CORRECTION_TAMPERING',
@@ -117,8 +117,8 @@ export default function TrendPanel({ trendsData }) {
                   <Tooltip
                     contentStyle={{
                       fontSize: 11,
-                      background: 'hsl(40, 6%, 97%)',
-                      border: '1px solid hsl(40, 5%, 86%)',
+                      background: 'hsl(222, 30%, 11%)',
+                      border: '1px solid hsl(222, 20%, 20%)',
                       borderRadius: 2,
                       padding: '6px 10px',
                     }}
@@ -169,8 +169,8 @@ export default function TrendPanel({ trendsData }) {
                   <Tooltip
                     contentStyle={{
                       fontSize: 11,
-                      background: 'hsl(40, 6%, 97%)',
-                      border: '1px solid hsl(40, 5%, 86%)',
+                      background: 'hsl(222, 30%, 11%)',
+                      border: '1px solid hsl(222, 20%, 20%)',
                       borderRadius: 2,
                       padding: '6px 10px',
                     }}
