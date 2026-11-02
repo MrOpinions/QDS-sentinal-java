@@ -6,6 +6,8 @@ A forger cannot copy a quantum state without disturbing it. QDS Sentinel models 
 
 > **Simulation only.** No quantum hardware is involved. See [What this does not claim](#what-this-does-not-claim).
 
+![The landing page: the headline "Observation leaves a mark" over a dot lattice bending toward the cursor](docs/images/landing-hero.jpg)
+
 ---
 
 ## Architecture
@@ -129,6 +131,8 @@ sequence), the threshold chain, the eight attacks, and what the project does
 not claim. The dot lattice behind it bends toward the cursor — observing the
 channel disturbs it, which is the premise the whole system rests on.
 
+![The protocol section mid-scroll, panels 02 Teleport and 03 Sign sliding sideways](docs/images/landing-protocol.jpg)
+
 ### Dashboard — `/dashboard`
 
 Two modes. **Simulation** is the engineer's view, seven tabs over one
@@ -144,6 +148,14 @@ assessment:
 | Experiment Report | Partial-forgery sweep: mismatch rate against attack intensity, with `s_a` and `s_v` drawn in |
 | Database Logs | The stored session as persisted, queried back from SQLite |
 
+![Threat Feed after a digest forgery: a red REJECT banner, with recorded and recomputed SHA-256 shown side by side](docs/images/dashboard-threat-feed.jpg)
+
+*Threat Feed. The evidence is the recorded digest against the recomputed one — the engine shows its working rather than asserting a verdict.*
+
+![Quantum State: a Bloch sphere with the prepared state and its measurement collapse, beside per-position telemetry](docs/images/dashboard-bloch.jpg)
+
+*Quantum State. Each of the 16 carriers, its prepared eigenstate, where measurement collapsed it, and the fidelity that came out.*
+
 **Operations** is the same data for a non-specialist:
 
 | Panel | Answers |
@@ -153,6 +165,10 @@ assessment:
 | What happened | Recent flagged events in plain language |
 | How exposed am I | Which vulnerability recurs most |
 | Trends | Hourly traffic and incident distribution |
+
+![Where the attacks landed: a pipeline from Alice to Bob with findings counted at four of five protocol stages](docs/images/operations-infiltration.jpg)
+
+*Where the attacks landed. Every finding attributed to the stage of the protocol it compromises, so the pipeline shows which links held.*
 
 ---
 
