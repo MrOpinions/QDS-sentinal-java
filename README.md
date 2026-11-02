@@ -131,7 +131,7 @@ sequence), the threshold chain, the eight attacks, and what the project does
 not claim. The dot lattice behind it bends toward the cursor — observing the
 channel disturbs it, which is the premise the whole system rests on.
 
-![The protocol section mid-scroll, panels 02 Teleport and 03 Sign sliding sideways](docs/images/landing-protocol.jpg)
+![The protocol section pinned, showing panels 01 Entangle and 02 Teleport with 03 entering from the right](docs/images/landing-protocol.jpg)
 
 ### Dashboard — `/dashboard`
 
