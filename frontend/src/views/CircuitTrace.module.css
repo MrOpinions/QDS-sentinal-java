@@ -56,9 +56,9 @@
   font-weight: 500;
 }
 
-.basisX { color: hsl(213, 50%, 42%); }
-.basisY { color: hsl(280, 38%, 46%); }
-.basisZ { color: hsl(142, 30%, 40%); }
+.basisX { color: var(--basis-x); }
+.basisY { color: var(--basis-y); }
+.basisZ { color: var(--basis-z); }
 
 .corrCell {
   width: 70px;
@@ -79,11 +79,11 @@
 }
 
 .rowCorrMismatch td {
-  background: hsl(6, 48%, 97%) !important;
+  background: var(--color-critical-bg) !important;
 }
 
 .rowLowFid td {
-  background: hsl(38, 55%, 96%) !important;
+  background: var(--color-advisory-bg) !important;
 }
 
 .fidelityBar {

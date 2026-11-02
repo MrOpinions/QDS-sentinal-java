@@ -50,14 +50,14 @@
 
 .ok {
   background: var(--color-accept-bg);
-  border-color: hsl(142, 22%, 80%);
+  border-color: var(--color-accept-border);
   border-left-color: var(--color-accept-bar);
   color: var(--color-accept);
 }
 
 .fail {
   background: var(--color-critical-bg);
-  border-color: hsl(6, 44%, 82%);
+  border-color: var(--color-critical-border);
   border-left-color: var(--color-critical-bar);
   color: var(--color-critical);
 }

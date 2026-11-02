@@ -64,13 +64,13 @@ function downloadFile(content, filename, mime) {
 function CsvDot(props) {
   const { cx, cy } = props
   if (cx == null || cy == null) return null
-  return <circle cx={cx} cy={cy} r={4} fill="hsl(213, 45%, 55%)" stroke="white" strokeWidth={1} />
+  return <circle cx={cx} cy={cy} r={4} fill="var(--basis-x)" stroke="var(--bg-base)" strokeWidth={1} />
 }
 
 function LiveDot(props) {
   const { cx, cy } = props
   if (cx == null || cy == null) return null
-  return <rect x={cx - 4} y={cy - 4} width={8} height={8} fill="hsl(28, 62%, 52%)" stroke="white" strokeWidth={1} />
+  return <rect x={cx - 4} y={cy - 4} width={8} height={8} fill="var(--color-suspicious)" stroke="var(--bg-base)" strokeWidth={1} />
 }
 
 function CustomTooltip({ active, payload, label }) {
@@ -182,13 +182,13 @@ export default function ExperimentReport() {
               tick={{ fontSize: 10, fontFamily: 'var(--font-mono)', fill: 'var(--text-muted)' }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine y={0.10} stroke="hsl(38, 62%, 44%)" strokeDasharray="4 3" label={{ value: 's_a=0.10 (direct auth)', position: 'right', fontSize: 9, fontFamily: 'var(--font-mono)', fill: 'hsl(38, 62%, 44%)' }} />
-            <ReferenceLine y={0.20} stroke="hsl(28, 60%, 46%)" strokeDasharray="4 3" label={{ value: 's_v=0.20 (forwarded verif)', position: 'right', fontSize: 9, fontFamily: 'var(--font-mono)', fill: 'hsl(28, 60%, 46%)' }} />
+            <ReferenceLine y={0.10} stroke="var(--color-advisory)" strokeDasharray="4 3" label={{ value: 's_a=0.10 (direct auth)', position: 'right', fontSize: 9, fontFamily: 'var(--font-mono)', fill: 'var(--color-advisory)' }} />
+            <ReferenceLine y={0.20} stroke="var(--color-suspicious)" strokeDasharray="4 3" label={{ value: 's_v=0.20 (forwarded verif)', position: 'right', fontSize: 9, fontFamily: 'var(--font-mono)', fill: 'var(--color-suspicious)' }} />
             <Line
               type="monotone"
               dataKey="csv_rate"
               name="CSV (pre-loaded)"
-              stroke="hsl(213, 45%, 55%)"
+              stroke="var(--basis-x)"
               strokeWidth={1.5}
               dot={<CsvDot />}
               connectNulls
@@ -197,7 +197,7 @@ export default function ExperimentReport() {
               type="monotone"
               dataKey="live_rate"
               name="Live (run)"
-              stroke="hsl(28, 62%, 52%)"
+              stroke="var(--color-suspicious)"
               strokeWidth={1.5}
               dot={<LiveDot />}
               strokeDasharray="5 3"

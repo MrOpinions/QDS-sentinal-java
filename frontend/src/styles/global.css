@@ -99,7 +99,7 @@ button.primary {
 }
 
 button.primary:hover:not(:disabled) {
-  background: hsl(40, 5%, 22%);
+  background: var(--btn-primary-hover);
 }
 
 input, select, textarea {
