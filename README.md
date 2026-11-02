@@ -104,6 +104,80 @@ The Vite dev server proxies `/api` and `/health` to port 8000, so the backend mu
 
 ---
 
+## Stack
+
+| Part | Built with | Why |
+|---|---|---|
+| Simulation | NumPy | Exact complex statevectors; normalisation asserted every step |
+| API | FastAPI + Pydantic | Strict request validation and a generated OpenAPI surface |
+| Primary store | SQLAlchemy + SQLite | What the dashboard reads; zero setup |
+| Audit store | MongoDB + `cryptography` | Append-only, encrypted, hash-chained (see [Audit log](#audit-log)) |
+| Console | React 18 + Vite | Seven tabs over one assessment payload |
+| Charts | plotly (Bloch sphere), recharts (2D) | 3D state projection vs. ordinary series |
+| Motion | GSAP + ScrollTrigger | Landing scroll narrative, dashboard entrance |
+| Type | Syne · Work Sans · Azeret Mono | Display, body, and data |
+
+---
+
+## The console
+
+### Landing page — `/`
+
+Explains the protocol before showing any numbers: the three layers, the four
+protocol steps (pinned and scrolling sideways, because a protocol is a
+sequence), the threshold chain, the eight attacks, and what the project does
+not claim. The dot lattice behind it bends toward the cursor — observing the
+channel disturbs it, which is the premise the whole system rests on.
+
+### Dashboard — `/dashboard`
+
+Two modes. **Simulation** is the engineer's view, seven tabs over one
+assessment:
+
+| Tab | Shows |
+|---|---|
+| Control Panel | Compose a session: message, parties, signature length, Bell state, bases, seed, attack type, threshold overrides |
+| Circuit Trace | Every signature position: basis, prepared state, Bell outcome, expected vs. actual correction, fidelity, match |
+| Quantum State | Bloch sphere per position, with prepared state and measurement collapse, and the telemetry behind it |
+| Threat Feed | Findings with observed evidence, protocol impact, and which authority raised them |
+| Security Metrics | Digest consistency, replay check, thresholds in use, mismatch rate, correction consistency, fidelity monitor |
+| Experiment Report | Partial-forgery sweep: mismatch rate against attack intensity, with `s_a` and `s_v` drawn in |
+| Database Logs | The stored session as persisted, queried back from SQLite |
+
+**Operations** is the same data for a non-specialist:
+
+| Panel | Answers |
+|---|---|
+| Threat status | Is anything wrong right now |
+| Where the attacks landed | Which protocol stage each finding compromises, drawn as a pipeline from Alice to Bob |
+| What happened | Recent flagged events in plain language |
+| How exposed am I | Which vulnerability recurs most |
+| Trends | Hourly traffic and incident distribution |
+
+---
+
+## Demo walkthrough
+
+With both servers running, open `/dashboard`. Three buttons in the Control
+Panel cover the interesting cases.
+
+| Step | Click | Expect | The point |
+|---|---|---|---|
+| 1 | **Clean session** | `ACCEPT` · 0/16 mismatch · fidelity 1.0000 | The honest baseline. Everything downstream is measured against this. |
+| 2 | **Digest forgery** | `REJECT` · `PAYLOAD_DIGEST_MISMATCH [CRITICAL]` | Recorded and recomputed SHA-256 shown side by side. Arithmetic, not statistics — the engine can prove this one. |
+| 3 | **Replay attack** | `REJECT` · `REPLAY_DETECTED` | The fingerprint was already in the ledger. Also deterministic. |
+| 4 | Attack type → any, then **Run Assessment** | Varies by intensity | Statistical detectors. The verdict is a threshold judgement, and the engine labels it as such. |
+
+Then switch to **Operations** and read *Where the attacks landed*: the same
+findings, attributed to the stage of the protocol each one breaks.
+
+Worth noticing in step 2: the header still reports `0 / 16` mismatch and
+fidelity `1.0000` next to a red `REJECT`. That is correct — the rejection came
+from the deterministic digest check, not from the statistics — and it is the
+clearest illustration of why the two kinds of detector are kept apart.
+
+---
+
 ## API
 
 ### Layer 1 — `/api/v1/layer1`
