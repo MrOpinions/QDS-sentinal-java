@@ -25,7 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
  * held in memory and appended to a JSON-lines file so they survive a restart.
  * Replaces the SQLAlchemy/SQLite layer, since the JDK ships no embedded database.
  */
-final class Store {
+class Store {
     static final class SessionRow {
         String id, senderId, recipientId, message, verificationMode, threatLevel, verdict, attackType, rawAssessment;
         Instant timestamp;
@@ -57,7 +57,14 @@ final class Store {
         if (file != null && Files.exists(file)) load();
     }
 
-    static final Store DEFAULT = new Store(env("QDS_DB_PATH", "qds_sentinel.jsonl.db"));
+    /** MySQL when MYSQL_URL is set, otherwise the in-memory store backed by a JSON-lines file. */
+    static final Store DEFAULT = create();
+
+    private static Store create() {
+        String url = System.getenv("MYSQL_URL");
+        if (url != null && !url.isEmpty()) return new JdbcStore(url, env("MYSQL_USER", "root"), System.getenv("MYSQL_PASSWORD"));
+        return new Store(env("QDS_DB_PATH", "qds_sentinel.jsonl.db"));
+    }
 
     static String env(String name, String dflt) {
         String v = System.getenv(name);

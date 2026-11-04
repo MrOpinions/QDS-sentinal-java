@@ -27,3 +27,6 @@ Thumbs.db
 
 # Java build output
 backend/out/
+
+# MySQL driver (download with the command in the README)
+backend/lib/*.jar

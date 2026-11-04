@@ -33,12 +33,23 @@ public final class Server {
     private static final Layer2.Ledger EXAMPLE_LEDGER = new Layer2.Ledger(100);
 
     public static void main(String[] args) throws IOException {
+        try {
+            Store.DEFAULT.listSessions(0);   // opens the database now, so a bad MySQL setting fails at startup
+        } catch (Throwable t) {
+            Throwable root = t instanceof ExceptionInInitializerError && t.getCause() != null ? t.getCause() : t;
+            System.err.println("Could not start the database layer: " + root.getMessage());
+            if (root.getCause() instanceof java.sql.SQLException || String.valueOf(root.getMessage()).contains("No suitable driver")) {
+                System.err.println("Check MYSQL_URL / MYSQL_USER / MYSQL_PASSWORD and that the Connector/J jar is on the classpath.");
+            }
+            System.exit(1);
+        }
         int port = Integer.parseInt(Store.env("PORT", "8000"));
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", Server::handle);
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
-        System.out.println(APP_NAME + " " + VERSION + " (Java) listening on http://localhost:" + port);
+        System.out.println(APP_NAME + " " + VERSION + " (Java) listening on http://localhost:" + port + " | store: "
+                + (Store.DEFAULT instanceof JdbcStore ? "MySQL" : "file"));
     }
 
     // ------------------------------------------------------------ plumbing
