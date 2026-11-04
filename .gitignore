@@ -24,3 +24,6 @@ venv/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Java build output
+backend/out/

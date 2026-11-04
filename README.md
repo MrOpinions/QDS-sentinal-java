@@ -24,7 +24,7 @@ All three layers are implemented.
 
 | Capability | Detail |
 |---|---|
-| Statevectors | NumPy complex arrays, normalisation asserted (‖v‖ ≈ 1.0) |
+| Statevectors | Complex `double[]` pairs in plain Java, normalisation asserted (‖v‖ ≈ 1.0) |
 | Pauli eigenstates | Exact basis states in X, Y and Z |
 | Bell states | Φ⁺, Φ⁻, Ψ⁺, Ψ⁻ |
 | Teleportation | Full 3-qubit circuit with feedforward correction (I, X, Z, XZ) |
@@ -68,24 +68,20 @@ Required ordering: `e_upper < s_a < s_v < p_E`
 
 | Component | Version |
 |---|---|
-| Python | 3.11+ |
+| JDK | 17+ (the backend uses only the JDK: no Maven, Gradle or third-party jars) |
 | Node.js | 18+ |
 
 ### Backend
 
 ```bash
-python -m venv .venv
+javac -d backend/out -sourcepath backend/src backend/src/qds/Server.java
 ```
 
 ```bash
-.venv/Scripts/python.exe -m pip install -r backend/requirements.txt
+java -cp backend/out qds.Server
 ```
 
-```bash
-.venv/Scripts/python.exe -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
-```
-
-Swagger UI: `http://127.0.0.1:8000/docs`
+The server listens on port 8000 (set `PORT` to change it). Sessions are stored in `qds_sentinel.jsonl.db` in the working directory; set `QDS_DB_PATH=memory` for a store that is discarded on exit.
 
 ### Frontend
 
@@ -110,10 +106,10 @@ The Vite dev server proxies `/api` and `/health` to port 8000, so the backend mu
 
 | Part | Built with | Why |
 |---|---|---|
-| Simulation | NumPy | Exact complex statevectors; normalisation asserted every step |
-| API | FastAPI + Pydantic | Strict request validation and a generated OpenAPI surface |
-| Primary store | SQLAlchemy + SQLite | What the dashboard reads; zero setup |
-| Audit store | MongoDB + `cryptography` | Append-only, encrypted, hash-chained (see [Audit log](#audit-log)) |
+| Simulation | Plain Java (`java.util`, `java.security`) | Exact complex statevectors; normalisation asserted every step |
+| API | `com.sun.net.httpserver` (`jdk.httpserver`) | Built into the JDK; request validation is hand-written and mirrors the old Pydantic rules |
+| Primary store | In-memory tables + append-only JSON-lines file | What the dashboard reads; zero setup |
+| Audit store | Append-only file, `javax.crypto` AES-GCM, SHA-256 chain | Encrypted and hash-chained (see [Audit log](#audit-log)) |
 | Console | React 18 + Vite | Seven tabs over one assessment payload |
 | Charts | plotly (Bloch sphere), recharts (2D) | 3D state projection vs. ordinary series |
 | Motion | GSAP + ScrollTrigger | Landing scroll narrative, dashboard entrance |
@@ -146,7 +142,7 @@ assessment:
 | Threat Feed | Findings with observed evidence, protocol impact, and which authority raised them |
 | Security Metrics | Digest consistency, replay check, thresholds in use, mismatch rate, correction consistency, fidelity monitor |
 | Experiment Report | Partial-forgery sweep: mismatch rate against attack intensity, with `s_a` and `s_v` drawn in |
-| Database Logs | The stored session as persisted, queried back from SQLite |
+| Database Logs | The stored session as persisted, queried back from the store |
 
 ![Threat Feed after a digest forgery: a red REJECT banner, with recorded and recomputed SHA-256 shown side by side](docs/images/dashboard-threat-feed.jpg)
 
@@ -226,53 +222,46 @@ clearest illustration of why the two kinds of detector are kept apart.
 | `GET` | `/sessions` | Stored sessions |
 | `GET` | `/logs` | Telemetry across sessions |
 | `GET` | `/logs/{session_id}` | Telemetry for one session |
-| `GET` | `/audit/verify` | Whether the Mongo audit chain is intact |
+| `GET` | `/audit/verify` | Whether the audit chain is intact |
 
 ---
 
 ## Tests
 
 ```bash
-.venv/Scripts/python.exe -m pytest backend/tests -q
+javac -d backend/out -sourcepath backend/src backend/src/qds/SelfTest.java
 ```
 
-**161 passing.**
+```bash
+java -cp backend/out qds.SelfTest
+```
 
-| Area | Tests |
+`SelfTest` is a dependency-free check that exits non-zero on failure. It covers:
+
+| Area | Checks |
 |---|---|
-| Layer 2 API (integration) | 20 |
-| Layer 2 detectors | 19 |
-| Layer 2 engine | 16 |
-| Replay ledger | 12 |
-| Calibration | 11 |
-| Layer 1 flow (integration) | 11 |
-| Bounds | 10 |
-| Bloch visualisation | 10 |
-| Teleportation | 6 |
-| Quantum states | 6 |
-| Pauli corrections | 6 |
-| QDS signature | 5 |
-| Attacks | 5 |
-| Keygen | 4 |
-| Measurement | 4 |
-| Bell states | 3 |
-| Mongo audit sink | 13 |
-
-Five warnings are expected: tests that deliberately feed invalid threshold chains, plus one FastAPI deprecation.
+| Quantum core | Eigenstate norms, Bloch coordinates, teleportation fidelity for every Bell state × eigenstate over 40 seeds each, Born-rule measurement, Pauli corrections |
+| Protocol | SHA-256 digest, seed reproducibility, clean-session invariants, JSON round-trip |
+| Bounds | Hoeffding upper bound and tail, threshold-chain validation |
+| Replay ledger | Exact repeat, reused nonce, non-increasing sequence, eviction |
+| Engine | Clean accept, replay, digest forgery, impersonation, broken threshold chain, forwarded mode |
+| Attacks | All eight attack types, original session left untouched |
+| Audit log | Chain intact, field encryption, edit detected at the right record, disabled no-op |
+| JSON | Parse / write round-trip, canonical key order |
 
 ---
 
 ## Audit log
 
-Sessions are written to SQLite, which is what the dashboard reads. They are
-also mirrored to an append-only MongoDB collection that exists to prove
-afterwards that nothing was altered.
+Sessions go to the primary store, which is what the dashboard reads. They can
+also be mirrored to an append-only audit file that exists to prove afterwards
+that nothing was altered.
 
 Two protections, doing different jobs:
 
 | | Mechanism | Protects against | Reversible |
 |---|---|---|---|
-| **Confidentiality** | Fernet (AES-128-CBC + HMAC) on `message`, `sender_id`, `recipient_id`, `raw_assessment_string` | Anyone reading the collection directly | Yes — the app decrypts |
+| **Confidentiality** | AES-256-GCM on `message`, `sender_id`, `recipient_id`, `raw_assessment_string` | Anyone reading the file directly | Yes — the app decrypts |
 | **Integrity** | SHA-256 chain: each record hashes its own content plus the previous record's hash | Silent edits or deletions by anyone with write access | No — one-way by design |
 
 Hashing alone would make the log unreadable, including to the dashboard.
@@ -288,36 +277,40 @@ can still aggregate over them.
 
 | Variable | Effect |
 |---|---|
-| `MONGODB_URI` | Enables the sink. Unset, the sink is disabled and the app runs on SQLite alone |
-| `MONGODB_DB` | Database name (default `qds_sentinel`) |
-| `AUDIT_ENCRYPTION_KEY` | Fernet key or any passphrase. Unset, records are chained but not encrypted |
+| `AUDIT_LOG_PATH` | Enables the sink and names the JSON-lines file. Unset, the sink is disabled |
+| `AUDIT_ENCRYPTION_KEY` | Any passphrase (stretched to an AES key with SHA-256). Unset, records are chained but not encrypted |
+| `QDS_DB_PATH` | Primary store file (default `qds_sentinel.jsonl.db`); `memory` keeps it in RAM only |
+| `PORT` | HTTP port (default `8000`) |
 
 ```bash
-export MONGODB_URI="mongodb://localhost:27017"
+export AUDIT_LOG_PATH=qds_audit.jsonl
 ```
 
 ```bash
-export AUDIT_ENCRYPTION_KEY="$(python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')"
+export AUDIT_ENCRYPTION_KEY="a long passphrase"
 ```
 
-The sink degrades quietly: an unreachable server disables it rather than
-failing a request, because losing the audit mirror must never cost the primary
-record.
+A failed audit write is logged and swallowed: losing the audit mirror must
+never cost the primary record.
 
-> Tested against `mongomock`, so the suite needs no running server. It has not
-> yet been run against a real MongoDB instance.
+> The JDK ships no MongoDB or SQL driver, so both stores are plain files.
+> Swapping either for a real database means adding a driver jar.
 
 ---
 
 ## Layout
 
 ```
-backend/app/
-  layer1_protocol/   statevectors, Bell states, teleportation, signatures
-  layer2_threat/     detectors, bounds, calibration, replay ledger, engine
-  database/          SQLAlchemy models, CRUD, session, Mongo audit sink
-  schemas/           Pydantic request and response models
-  api/               Layer 1 and operations routes
+backend/src/qds/
+  Quantum.java       statevectors, gates, Bell states, teleportation, measurement, noise, Bloch
+  Protocol.java      key material, signature packet, session, shared data model
+  Layer2.java        bounds, replay ledger, detectors, engine, attack injection, calibration
+  Store.java         primary store and the hash-chained audit log
+  Server.java        HTTP routes, request validation, persistence glue
+  Ops.java           operations-mode endpoints
+  Json / Req / Fmt   JSON reader and writer, typed request access, formatting helpers
+  SelfTest.java      dependency-free test run
+backend/data/        partial_forgery_sweep.csv
 frontend/src/
   landing/           landing page, GSAP scroll, cursor-warp canvas
   views/             dashboard tabs
